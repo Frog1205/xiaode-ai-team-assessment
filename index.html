@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>晓得AI V1.0 项目团队胜任力验证题库</title>
+<style>
+:root{--accent:#c8242e;--ink:#1a1a1a;--grey:#666;--line:#e4dfd6;--bg:#faf8f5;--card:#fff;--ok:#2f7d4f;--warn:#b7791f}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.65 -apple-system,"Microsoft YaHei","PingFang SC",sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--accent)}
+.skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;background:#fff;padding:6px 10px;z-index:9}
+header{background:#fff;border-bottom:1px solid var(--line);padding:18px 24px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:20px}
+header .meta{color:var(--grey);font-size:13px;margin-top:2px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.bar label{font-size:13px;color:var(--grey)}
+.bar input{border:1px solid var(--line);border-radius:6px;padding:5px 8px;font:inherit;font-size:13px}
+button{font:inherit;font-size:13px;border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 10px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.progress{font-size:13px;color:var(--grey);margin-left:auto}
+.wrap{display:grid;grid-template-columns:240px 1fr;gap:24px;max-width:1240px;margin:0 auto;padding:24px}
+nav{position:sticky;top:132px;align-self:start;max-height:calc(100vh - 150px);overflow:auto;font-size:13px}
+nav a{display:block;color:var(--ink);text-decoration:none;padding:3px 0}
+nav a.l2{padding-left:12px;color:var(--grey)}
+nav a:hover{color:var(--accent)}
+main{min-width:0}
+h2{color:var(--accent);font-size:20px;margin:32px 0 10px;scroll-margin-top:140px}
+h3{color:var(--accent);font-size:16px;margin:24px 0 8px;scroll-margin-top:140px}
+main>section:first-child h2{margin-top:0}
+p,li{max-width:80ch}
+.q{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0}
+.q.scored{border-left:4px solid var(--ok)}.q.flag{border-left:4px solid var(--accent)}
+.qh{display:flex;gap:10px;align-items:baseline}
+.qid{font-weight:700;color:var(--accent);min-width:38px}
+.qt{font-weight:600}
+details{margin-top:8px;font-size:14px}
+summary{cursor:pointer;color:var(--grey)}
+.ans{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.ans div{background:var(--bg);border-radius:6px;padding:8px 10px}
+.ans b{display:block;font-size:12px;color:var(--grey)}
+.ans .rf b{color:var(--accent)}
+.score{display:flex;gap:6px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.score span{font-size:13px;color:var(--grey);margin-right:2px}
+.score button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.score button.f[aria-pressed=true]{background:var(--accent);border-color:var(--accent)}
+.score input{flex:1;min-width:180px;border:1px solid var(--line);border-radius:6px;padding:5px 8px;font:inherit;font-size:13px}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:14px;margin:8px 0 14px}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#f2efe9}
+td.pass{color:var(--ok);font-weight:600}td.fail{color:var(--accent);font-weight:600}td.pend{color:var(--warn)}
+.note{font-size:13px;color:var(--grey)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:860px){.wrap{grid-template-columns:1fr}nav{display:none}.ans{grid-template-columns:1fr}header{position:static}}
+@media print{header .bar,nav,.score button,details summary{display:none}.wrap{display:block;padding:0}details{display:block}details>*{display:block}.q{break-inside:avoid}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<header>
+  <h1 id="title"></h1>
+  <div class="meta">内部资料 · 评分仅保存在本机浏览器，不上传任何服务器</div>
+  <div class="bar">
+    <label for="who">被评估团队/人</label><input id="who" placeholder="例如：全员 / 李松">
+    <label for="rater">评分人</label><input id="rater" placeholder="姓名">
+    <button id="expand">展开全部答案</button>
+    <button id="export">导出 CSV</button>
+    <button id="print">打印 / 存 PDF</button>
+    <button id="reset">清空评分</button>
+    <span class="progress" id="progress" aria-live="polite"></span>
+  </div>
+</header>
+<div class="wrap">
+  <nav aria-label="目录" id="toc"></nav>
+  <main id="main"></main>
+</div>
+<script>
+const DATA = {"title": "晓得AI V1.0 项目团队胜任力验证题库", "sections": [{"title": "一、使用说明", "blocks": [{"k": "p", "t": "本题库用于签约前验证团队能否在 50 个工作日内完成附件一基础范围。题目按附件一模块拆分，每题标注主答人；每个模块由主答人回答，其他人旁听补充。重点不在答对术语，而在于能否说出具体做法、踩过的坑和工时估算。"}, {"k": "p", "t": "三类题型："}, {"k": "li", "t": "A 类 · 投入与组织：先做，决定其余判断是否成立。任何一项不合格，先解决人力问题再谈技术。"}, {"k": "li", "t": "B 类 · 技术面谈：每题约 3~5 分钟，按“合格回答要点”打分，出现“红旗信号”直接记 0 分。"}, {"k": "li", "t": "C 类 · 实操验证：限时小任务，要求提交可运行结果或录屏，比面谈更可靠，高风险模块必做。"}, {"k": "p", "t": "评分：每题 0~3 分。0 = 答不上或出现红旗；1 = 只有概念；2 = 能说清做法；3 = 有亲身经历、能说出具体坑和工时。"}, {"k": "p", "t": "建议安排：第 1 天做 A 类（约 1 小时）；第 2~3 天分模块做 B 类（每模块 30~45 分钟）；同时下发 C 类，第 5 个工作日前收结果。"}], "subs": []}, {"title": "二、A 类 · 投入与组织（全员）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["A1", "项目 10 周内，你每周能稳定投入多少小时？其中工作日白天多少小时？", "给出具体数字；全职成员不低于每周 40 小时；兼职者说明固定时段", "“看情况”“尽量”；无法给数字"], ["A2", "目前手上还有哪些项目或工作？10 周内有无出差、考试、婚假、产假等已知安排？", "如实列出并说明冲突时间段", "回避；签约后才暴露"], ["A3", "如果你中途退出，你负责的模块谁能接手？交接需要几天？", "能说出备份人；代码和文档有交接规范", "“不会退出”；只有自己懂"], ["A4", "甲方晚上 9 点报 P0 线上故障，谁响应？多久能到？", "有明确值班人和响应时间（合同要求 2 个工作小时）", "没人负责；默认第二天"], ["A5", "（项目负责人）如在其他公司或机构有任职，本项目每周能投入几天？甲方会议谁兜底？", "给出天数；指定副手或替补主持人", "全靠本人且无替补"], ["A6", "（产品顾问）产品方案、原型、需求确认在第几周前必须完成？你能保证出席需求评审和验收会吗？", "能对应到合同第二阶段；关键会议能到", "原型拖到开发中期"], ["A7", "本项目后端（订单、支付、分佣）由谁主责？他从头跟到尾吗？", "指名到人，且此人认可", "“大家一起做”；无主责人"], ["A8", "有没有以前项目可复用的代码（商城、uni-app 壳、后台框架、权限、支付）？版权归谁？", "列出可复用模块及权属；能节省多少人日", "复用甲方客户的代码（侵权风险）"], ["A9", "每人按附件一估一下自己模块的人日，汇总后和 50 个工作日的人力对比，差多少？", "有分模块数字，含联调、测试、上架", "只给总数或拍脑袋；不含测试"]]}], "subs": []}, {"title": "三、B 类 · 技术面谈（按附件一模块）", "blocks": [], "subs": [{"title": "3.1 架构与工程（主答：项目负责人）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B1", "画出本项目总体架构：App、商家端、后台、API、AI 服务、直播、支付、存储如何连接？", "分层清晰；说明单体或服务拆分理由；文件走对象存储", "把所有能力塞进一个进程且无理由"], ["B2", "后端技术栈选什么？为什么不选其他？", "结合团队熟悉度和工期取舍，例如 Java/Spring Boot 或 Node/NestJS", "按个人喜好选冷门栈"], ["B3", "环境如何划分（开发 / 测试 / 生产）？数据库变更如何管理？", "至少三套环境；迁移脚本（Flyway、Prisma Migrate 等）纳入版本库", "直接改生产库"], ["B4", "代码仓库与分支策略？如何保证合同要求的每两周提交一次？", "主干 + 特性分支；按阶段打标签，对应合同 6.1 条代码快照", "只在本地，不进私有仓库"], ["B5", "生产密钥（支付、云、AI Key）如何管理与交接？", "环境变量或密钥管理服务；不入仓库；有轮换方式", "密钥写在代码里"], ["B6", "部署方案：域名、HTTPS、ICP 备案、App 后端域名，各需几天？谁办？", "知道备案周期约 1~3 周，需甲方主体；提前启动", "不知道要备案"], ["B7", "哪三个模块最可能导致延期？各自的应对方案是什么？", "点名直播、支付分佣、应用上架，并有前置验证计划", "“都没问题”"]]}]}, {"title": "3.2 账号体系（主答：全栈开发 / 前端负责人）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B8", "短信验证码登录如何防刷？", "图形验证码或滑块、同号同 IP 频控、验证码有效期与次数限制", "只有 60 秒倒计时"], ["B9", "App 内微信授权登录完整流程？与手机号账号如何绑定和合并？", "微信开放平台移动应用、code 换 token、unionid 关联；绑定冲突处理", "与小程序登录混淆"], ["B10", "登录态如何设计？Token 过期、多端登录、强制下线怎么处理？", "access + refresh token；服务端可吊销", "Token 永不过期"], ["B11", "账号注销如何实现？注销后订单、佣金、课程记录怎么处理？", "知道应用市场强制要求在线注销；冷静期；财务数据按法规保留并脱敏", "直接物理删除全部数据"]]}]}, {"title": "3.3 C 端 App 与前端（主答：前端负责人）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B12", "uni-app 用 Vue2 还是 Vue3？nvue 什么时候用？列表卡顿如何优化？", "能说出取舍；长列表虚拟化、图片懒加载", "不知道 nvue 和原生渲染差异"], ["B13", "uni-app 中哪些能力需要原生插件？本项目哪些模块要用？", "直播 SDK、部分推送、视频播放增强；知道离线打包与自定义基座", "以为所有 SDK 都能直接用 JS 调"], ["B14", "iOS 打包需要哪些证书和描述文件？谁的开发者账号？", "开发 / 发布证书、Profile、Bundle ID；账号须甲方主体（合同 3.2 条）", "用个人账号打包上线"], ["B15", "上线前应用市场要准备哪些材料？最常见的被拒原因？", "隐私政策、权限说明、软著（国内安卓市场常要求）、首次启动隐私弹窗；被拒原因：隐私合规、注销、虚拟支付", "只知道 App Store"], ["B16", "隐私合规：首次启动同意前不能做什么？SDK 合规怎么查？", "同意前不初始化第三方 SDK、不读设备标识；有 SDK 清单", "没听说过工信部检测"], ["B17", "视频音频播放：倍速、续播、进度上报、后台播放、防录屏，哪些能做？", "能区分可做与不可做；进度定时节流上报", "承诺绝对防录屏"], ["B18", "商家端和后台用什么框架？权限如何做到按钮级？", "Vue3 + Element Plus 或同类；路由 + 按钮权限码由后端下发", "只在前端隐藏按钮，接口不校验"]]}]}, {"title": "3.4 课程学习（主答：全栈开发 / 前端负责人，产品顾问补充）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B19", "课程视频如何存储和分发？是否需要转码？", "对象存储 + CDN；转码为 HLS，多码率；注意流量费用归甲方（附件三）", "视频放在应用服务器上"], ["B20", "如何防止未购买用户拿到视频地址直接下载？", "签名 URL 带时效、Referer 或 Token 校验；明确 DRM 不在本期范围", "承诺 DRM 级防盗"], ["B21", "学习进度、完成状态、续播如何设计数据表？", "用户 × 章节进度表，记录最后位置和完成标记；幂等上报", "只存在手机本地"], ["B22", "iOS 上卖虚拟课程能用微信支付吗？", "知道苹果规定 App 内售卖数字内容通常须走 IAP（抽成 15%~30%），需与甲方确认方案并补进附件一", "完全不知道 IAP"]]}, {"k": "p", "t": "注：B22 是本项目的范围隐患，附件一目前只写了微信支付，未涉及 iOS 虚拟商品。无论团队是否答出，都应在签约前与甲方确认。"}]}, {"title": "3.5 AI 学习管家 MVP（主答：AI 负责人，全栈开发补充）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B23", "一个 40 分钟视频从上传到生成摘要、知识点、练习题，完整链路怎么走？", "上传 → 抽音频 → ASR → 分段 → 章节切分 → LLM 生成 → 结构化入库；异步任务队列", "同步请求一次跑完"], ["B24", "ASR 选哪家？40 分钟音频大约多少钱、多久出结果？", "能给出供应商及大致单价和耗时（录音文件识别通常为分钟级）", "说不出价格量级"], ["B25", "PDF / Word 抽取遇到扫描件、表格、公式怎么办？", "扫描件走 OCR；表格保留结构；无法处理的给出明确提示", "承诺 100% 识别"], ["B26", "RAG 的切块策略、向量库选型、混合检索？如何做到只回答课程内容并展示引用？", "按语义或章节切块并重叠；向量 + 关键词混合；召回不足时拒答；返回引用片段", "直接把全文塞进 Prompt"], ["B27", "LLM 生成练习题如何保证格式稳定可入库？", "JSON Schema、结构化输出校验、失败重试与降级", "靠 Prompt 写“请输出 JSON”"], ["B28", "附件一要求“失败提示、重试和人工编辑”，各在哪一步实现？", "任务状态机（排队 / 处理中 / 失败 / 完成）；分步重试；结果可编辑后保存", "失败只能重新上传"], ["B29", "单次处理的 AI 成本怎么估？如何设上限防止费用失控？", "按 Token 和 ASR 时长估算；用户和商家维度配额；监控告警", "不考虑成本"], ["B30", "附件一说“不保证每次一致或绝对准确”，验收时你怎么证明 AI 达标？", "用约定样本集跑固定用例；检查格式、引用和失败处理，而不是答案完美", "没有样本集"], ["B31", "AI 生成内容在国内上线需要什么合规手续？", "使用已备案的大模型服务；生成内容加标识；有内容审核", "没听说过生成式 AI 备案或标识要求"]]}]}, {"title": "3.6 商城与微信支付（主答：后端主责人）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B32", "App 内调起微信支付的完整流程？和小程序支付有什么区别？", "服务端统一下单（APP 支付）→ 返回参数 → SDK 调起 → 异步回调为准；需开放平台移动应用和商户号绑定", "以前端返回成功作为支付结果"], ["B33", "支付回调重复通知、乱序、回调失败怎么处理？", "验签；按订单号幂等；状态机只允许正向流转；主动查单补偿", "回调里直接加库存或加佣金且不做幂等"], ["B34", "库存什么时候扣？超卖怎么防？未支付订单怎么释放？", "下单预占或支付扣减各有取舍；数据库行锁或原子扣减；超时关单释放", "不考虑并发"], ["B35", "SPU / SKU 表结构怎么设计？规格组合怎么存？", "SPU、SKU、规格项、规格值分表；SKU 关联价格和库存", "规格写在一个 JSON 字段里却无法按 SKU 扣库存"], ["B36", "退款流程：部分退款、退款回调、退款后订单和佣金如何变化？", "退款单独建表；调用退款接口；回调更新；触发佣金冲正", "直接改订单状态"], ["B37", "商户号谁申请？需要什么资质？多久能开通？", "甲方主体申请，需营业执照和对公账户；需提前 1~2 周", "用乙方商户号代收（资金合规风险）"]]}]}, {"title": "3.7 直播 Lite（主答：待指定，必问）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B38", "是否做过直播？用过哪家 SDK（TRTC、声网、即构、阿里云）？", "有实际接入经历", "从未做过且没有验证计划"], ["B39", "uni-app 里接 TRTC 怎么做？有没有官方插件？iOS 和 Android 各有什么坑？", "知道原生插件或 nvue 组件方式、自定义基座调试、权限申请", "以为 H5 页面能直接推流"], ["B40", "弹幕、点赞、在线人数用什么实现？高峰时怎么防刷屏？", "腾讯云 IM 或自建 WebSocket；点赞合并上报；频率限制", "每次点赞写一次数据库"], ["B41", "回放怎么生成？录制、转码、存储费用谁出？", "云端录制回调写入点播；费用按附件三由甲方承担", "本地录屏上传"], ["B42", "直播内容审核、禁播、举报怎么做？", "接入云厂商内容审核或人工巡查；后台一键断流", "不考虑审核"], ["B43", "附件一要锁定“单直播间人数”和网络设备，你建议填多少？依据是什么？", "按 SDK 套餐和测试条件给出合理值", "承诺“万人不卡”"], ["B44", "App 有直播功能，应用市场和监管有什么额外要求？", "知道可能涉及网络文化或视听类资质，需甲方确认主体资质", "完全不了解"]]}]}, {"title": "3.8 分佣结算 Lite（主答：全栈开发 / 后端主责人）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B45", "佣金在什么时间点计算？订单完成、确认收货还是过了退款期？", "订单完成后先进入冻结期，过退款期再变为可提现", "支付成功就直接可提现"], ["B46", "退款冲正：佣金已提现后用户退款，怎么处理？", "记负向流水，冲抵后续佣金；账户可为负或挂账", "直接改历史流水"], ["B47", "资金流水表怎么设计才能对得上账？", "只增不改的流水表 + 余额快照；每笔带业务单号；日终对账", "只存一个余额字段"], ["B48", "提现怎么打款？平台能否自己收款再分给商家？", "知道“二清”合规风险；用持牌支付机构的分账能力；附件一要求持牌产品", "平台代收后人工转账"], ["B49", "两级推广分佣有什么法律风险？", "知道多级分销可能涉及传销认定，需甲方确认方案（附件一第三部分）", "层级随便设"], ["B50", "金额用什么类型存储和计算？", "整数“分”或 Decimal；四舍五入规则统一", "用浮点数"]]}]}, {"title": "3.9 平台后台与商家端（主答：前端负责人 / 全栈开发）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B51", "角色权限模型怎么设计？平台管理员、财务、运营、商家各看到什么？", "RBAC；商家只看本店数据，后端按商家 ID 过滤", "只做前端菜单隐藏"], ["B52", "如何防越权：商家 A 改 URL 中的 ID 看到商家 B 的订单？", "所有接口校验数据归属；有越权测试用例（附件一要求）", "没考虑过"], ["B53", "商家入驻审核流程和资料存储？营业执照、身份证怎么保护？", "状态机流转；敏感文件私有桶 + 临时访问；访问留日志", "证件照片放公开链接"], ["B54", "简单财务对账要对什么？", "订单、支付流水、退款、佣金、提现五方核对；差异报表", "只统计销售额"]]}]}, {"title": "3.10 测试、质量与上线（主答：AI 负责人）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B55", "测试计划怎么排？谁写用例？谁回归？", "按附件一第五部分验收用例拆分；每阶段有回归；最后两周集中测试", "开发自测即可"], ["B56", "支付、退款、分佣这类场景如何自动化测试？", "沙箱或模拟回调；构造重复回调、乱序用例", "只在生产上用真钱测"], ["B57", "附件一的备份恢复指标（备份周期、恢复时间、恢复点）怎么做、怎么演示？", "自动备份 + 定期恢复演练，有记录", "只开了云盘快照"], ["B58", "P0 缺陷的定义是什么？发现 P0 后多久处理？", "能说出合同定义（主流程中断、支付错误、数据丢失、越权）和 2 小时响应", "不知道合同定义"], ["B59", "上线前检查清单包含哪些项？", "安全扫描、压测、隐私检测、备份、监控告警、回滚预案、密钥轮换", "只有“功能都能用”"]]}]}, {"title": "3.11 产品与需求（主答：产品顾问）", "blocks": [{"k": "q", "rows": [["编号", "问题", "合格回答要点", "红旗信号"], ["B60", "把附件一的模块拆成可单独确认的《模块交互确认函》，你会拆成几个？先确认哪些？", "10~20 个模块；按开发顺序和依赖排序", "拆不出来或只按页面拆"], ["B61", "附件一第三部分的 7 项追加事项，你建议哪几项勾“后期”？理由？", "结合工期给出取舍", "全部勾“包含”"], ["B62", "甲方在演示会上口头提出新需求，你当场怎么回应？", "记录后走 4.2 条变更评估，不当场承诺", "当场答应"], ["B63", "AI 学习管家 MVP 的“最小”边界在哪里？哪些一定不做？", "对照排除范围：不做长期记忆、情感陪伴、知识图谱", "边界说不清"]]}]}]}, {"title": "四、C 类 · 实操验证（限时小任务）", "blocks": [{"k": "p", "t": "实操比面谈可靠。C1~C3 对应工期风险最高的模块，签约前必须完成；其余可视面谈得分决定。提交物统一为：代码仓库链接 + 录屏 + 一页说明（含实际耗时和遇到的问题）。"}, {"k": "tbl", "rows": [["编号", "任务", "主做人", "时限", "通过标准"], ["C1 必做", "直播技术验证：uni-app 接入 TRTC（或选定 SDK），Android 和 iOS 真机实现开播、观看、评论、点赞、结束", "直播负责人", "5 个工作日", "两端真机录屏可用；说明插件方案、费用及坑点；跑不通须给出降级方案"], ["C2 必做", "支付闭环：用沙箱或模拟回调实现下单 → 支付回调 → 订单完成 → 退款，含重复回调幂等", "后端主责人", "3 个工作日", "重复回调 5 次只入账 1 次；退款后状态正确；附测试用例"], ["C3 必做", "AI 链路：选一段 10~40 分钟课程视频，完成 ASR → 章节切分 → 摘要 → 5 道练习题（JSON 入库）→ 带引用的问答", "AI 负责人", "3 个工作日", "结构化输出可入库；问答有引用；记录耗时和单次成本"], ["C4", "分佣冲正：给定 10 笔订单（含 2 笔退款，其中 1 笔佣金已提现），输出流水和余额", "全栈开发", "1 个工作日", "流水只增不改；最终余额与手工计算一致"], ["C5", "越权测试：搭一个最小接口，商家 A 用 B 的订单 ID 请求应被拒绝，并写出自动化测试", "前端负责人 / 全栈开发", "半个工作日", "测试通过；能说明全局拦截方式"], ["C6", "上架预检：列出 iOS 与华为、小米、OPPO、vivo、应用宝的上架材料清单和周期，标出需甲方提供的项", "前端负责人", "1 个工作日", "清单完整，含软著、隐私政策、注销入口、权限说明"], ["C7", "工作量估算：每人按附件一自己负责的模块估人日（含联调、测试、上架），汇总对比 50 个工作日", "全员，项目负责人汇总", "2 个工作日", "分模块数字可解释；给出缺口和应对方案"]]}], "subs": []}, {"title": "五、评分汇总与判定", "blocks": [{"k": "summary", "rows": [["模块", "题号", "满分", "得分", "风险权重", "是否通过"], ["投入与组织", "A1~A9", "27", "", "决定性", ""], ["架构与工程", "B1~B7", "21", "", "中", ""], ["账号体系", "B8~B11", "12", "", "低", ""], ["C 端 App 与前端", "B12~B18", "21", "", "中", ""], ["课程学习", "B19~B22", "12", "", "中", ""], ["AI 学习管家", "B23~B31", "27", "", "中", ""], ["商城与支付", "B32~B37", "18", "", "高", ""], ["直播 Lite", "B38~B44", "21", "", "高", ""], ["分佣结算", "B45~B50", "18", "", "高", ""], ["后台与商家端", "B51~B54", "12", "", "中", ""], ["测试与上线", "B55~B59", "15", "", "中", ""], ["产品与需求", "B60~B63", "12", "", "中", ""]]}, {"k": "p", "t": "判定规则："}, {"k": "li", "t": "一票否决：A 类出现无法给出投入时间、无后端主责人、核心成员签约后才暴露冲突，任一项即判定“当前不具备承接条件”，先补人或调整工期。"}, {"k": "li", "t": "高风险模块：商城与支付、直播、分佣结算三项，任一模块得分低于满分的 60%，或对应 C1/C2 实操未通过，该模块须签约前在附件一降级、移至后期或外包。"}, {"k": "li", "t": "中风险模块：得分低于 50% 的，在项目计划中前置验证并预留缓冲。"}, {"k": "li", "t": "工期：C7 估算总人日超过可投入人日 10% 以上的，用估算表与甲方谈延长工期或分期，不在违约金条款上硬扛。"}], "subs": []}, {"title": "六、出题过程中发现的范围隐患", "blocks": [{"k": "p", "t": "以下问题不论团队答得如何，都需要在附件一签署前与甲方确认："}, {"k": "li", "t": "iOS 虚拟商品支付：附件一只写了微信支付。课程属于数字内容，iOS 端通常须走苹果 IAP，涉及 15%~30% 抽成和单独开发。"}, {"k": "li", "t": "直播资质：直播和课程内容可能涉及网络文化、视听类许可，需甲方主体具备或确认运营方式。"}, {"k": "li", "t": "分账合规：分佣结算须采用持牌支付机构的分账产品，平台不能代收再转账（附件一第四部分已有原则，需落到具体产品）。"}, {"k": "li", "t": "生成式 AI 合规：需使用已备案的大模型服务并对生成内容加标识，费用和供应商在附件三确认。"}, {"k": "li", "t": "ICP 备案与软著：备案需甲方主体，周期 1~3 周；部分安卓市场要求软著，申请周期较长，需尽早启动。"}], "subs": []}], "groups": [{"name": "投入与组织", "prefix": "A", "lo": 1, "hi": 9, "max": 27, "risk": "决定性"}, {"name": "架构与工程", "prefix": "B", "lo": 1, "hi": 7, "max": 21, "risk": "中"}, {"name": "账号体系", "prefix": "B", "lo": 8, "hi": 11, "max": 12, "risk": "低"}, {"name": "C 端 App 与前端", "prefix": "B", "lo": 12, "hi": 18, "max": 21, "risk": "中"}, {"name": "课程学习", "prefix": "B", "lo": 19, "hi": 22, "max": 12, "risk": "中"}, {"name": "AI 学习管家", "prefix": "B", "lo": 23, "hi": 31, "max": 27, "risk": "中"}, {"name": "商城与支付", "prefix": "B", "lo": 32, "hi": 37, "max": 18, "risk": "高"}, {"name": "直播 Lite", "prefix": "B", "lo": 38, "hi": 44, "max": 21, "risk": "高"}, {"name": "分佣结算", "prefix": "B", "lo": 45, "hi": 50, "max": 18, "risk": "高"}, {"name": "后台与商家端", "prefix": "B", "lo": 51, "hi": 54, "max": 12, "risk": "中"}, {"name": "测试与上线", "prefix": "B", "lo": 55, "hi": 59, "max": 15, "risk": "中"}, {"name": "产品与需求", "prefix": "B", "lo": 60, "hi": 63, "max": 12, "risk": "中"}]};
+const KEY = 'xzai-assess-v1';
+const S = JSON.parse(localStorage.getItem(KEY) || '{"scores":{},"notes":{},"meta":{}}');
+const save = () => { localStorage.setItem(KEY, JSON.stringify(S)); refresh(); };
+const el = (tag, attrs = {}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) k === 'class' ? e.className = v : e.setAttribute(k, v);
+  for (const c of kids) e.append(c);
+  return e;
+};
+const QS = [];
+let anchor = 0;
+const slug = () => 's' + (anchor++);
+
+function renderBlocks(parent, blocks) {
+  let ul = null;
+  for (const b of blocks) {
+    if (b.k !== 'li') ul = null;
+    if (b.k === 'p') parent.append(el('p', {}, b.t));
+    else if (b.k === 'li') {
+      if (!ul) { ul = el('ul'); parent.append(ul); }
+      const i = b.t.indexOf('：');
+      const li = el('li');
+      if (i > 0 && i <= 14) li.append(el('strong', {}, b.t.slice(0, i + 1)), b.t.slice(i + 1));
+      else li.append(b.t);
+      ul.append(li);
+    } else if (b.k === 'q') b.rows.slice(1).forEach(r => parent.append(question(r)));
+    else parent.append(el('div', { class: 'tw' }, table(b.rows, b.k === 'summary')));
+  }
+}
+
+function table(rows, isSummary) {
+  const t = el('table');
+  const thead = el('thead'), tr = el('tr');
+  rows[0].forEach(h => tr.append(el('th', { scope: 'col' }, h)));
+  thead.append(tr); t.append(thead);
+  const tb = el('tbody');
+  rows.slice(1).forEach((r, i) => {
+    const row = el('tr');
+    r.forEach((c, j) => {
+      const td = el(j === 0 ? 'th' : 'td', j === 0 ? { scope: 'row' } : {}, c);
+      if (isSummary) { if (j === 3) td.id = 'sum-' + i; if (j === 5) td.id = 'pass-' + i; }
+      row.append(td);
+    });
+    tb.append(row);
+  });
+  t.append(tb);
+  return t;
+}
+
+function question([id, q, ok, flag]) {
+  QS.push(id);
+  const box = el('article', { class: 'q', id: 'q-' + id, 'aria-labelledby': 'qt-' + id });
+  box.append(el('div', { class: 'qh' }, el('span', { class: 'qid' }, id), el('span', { class: 'qt', id: 'qt-' + id }, q)));
+  const det = el('details');
+  det.append(el('summary', {}, '查看合格要点与红旗信号'),
+    el('div', { class: 'ans' },
+      el('div', {}, el('b', {}, '合格回答要点'), ok),
+      el('div', { class: 'rf' }, el('b', {}, '红旗信号（出现记 0 分）'), flag)));
+  box.append(det);
+  const sc = el('div', { class: 'score', role: 'group', 'aria-label': id + ' 评分' }, el('span', {}, '评分'));
+  [['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['F', '红旗']].forEach(([v, label]) => {
+    const btn = el('button', { type: 'button', 'aria-pressed': String(S.scores[id] === v), 'data-v': v }, label);
+    if (v === 'F') btn.classList.add('f');
+    btn.onclick = () => { S.scores[id] = S.scores[id] === v ? undefined : v; save(); };
+    sc.append(btn);
+  });
+  const note = el('input', { type: 'text', placeholder: '备注：原话、疑点、追问', 'aria-label': id + ' 备注' });
+  note.value = S.notes[id] || '';
+  note.oninput = () => { S.notes[id] = note.value; localStorage.setItem(KEY, JSON.stringify(S)); };
+  sc.append(note);
+  box.append(sc);
+  return box;
+}
+
+const val = v => v === 'F' ? 0 : Number(v);
+function groupOf(id) {
+  const m = id.match(/^([A-Z])(\d+)$/);
+  return m && DATA.groups.findIndex(g => g.prefix === m[1] && +m[2] >= g.lo && +m[2] <= g.hi);
+}
+
+function refresh() {
+  const done = QS.filter(id => S.scores[id] !== undefined).length;
+  document.getElementById('progress').textContent = `已评 ${done} / ${QS.length} 题`;
+  QS.forEach(id => {
+    const box = document.getElementById('q-' + id), v = S.scores[id];
+    box.classList.toggle('scored', v !== undefined && v !== 'F');
+    box.classList.toggle('flag', v === 'F');
+    box.querySelectorAll('.score button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+  });
+  DATA.groups.forEach((g, i) => {
+    const ids = QS.filter(id => groupOf(id) === i);
+    const scored = ids.filter(id => S.scores[id] !== undefined);
+    const sum = scored.reduce((a, id) => a + val(S.scores[id]), 0);
+    const cell = document.getElementById('sum-' + i), pass = document.getElementById('pass-' + i);
+    if (!cell) return;
+    cell.textContent = scored.length ? `${sum}（已评 ${scored.length}/${ids.length}）` : '';
+    pass.className = '';
+    if (scored.length < ids.length) { pass.textContent = scored.length ? '评分中' : ''; pass.className = 'pend'; return; }
+    const flagged = ids.some(id => S.scores[id] === 'F');
+    const line = g.risk === '高' ? 0.6 : g.risk === '决定性' ? 0.6 : 0.5;
+    const ok = sum >= g.max * line && !(g.risk === '决定性' && flagged);
+    pass.textContent = ok ? '通过' : (g.risk === '决定性' ? '不通过（先解决人力）' : '不通过');
+    pass.className = ok ? 'pass' : 'fail';
+  });
+}
+
+function build() {
+  document.getElementById('title').textContent = DATA.title;
+  const main = document.getElementById('main'), toc = document.getElementById('toc');
+  for (const s of DATA.sections) {
+    const id = slug(), sec = el('section', { 'aria-labelledby': id });
+    sec.append(el('h2', { id }, s.title));
+    toc.append(el('a', { href: '#' + id }, s.title));
+    renderBlocks(sec, s.blocks);
+    for (const sub of s.subs) {
+      const sid = slug();
+      sec.append(el('h3', { id: sid }, sub.title));
+      toc.append(el('a', { href: '#' + sid, class: 'l2' }, sub.title));
+      renderBlocks(sec, sub.blocks);
+    }
+    main.append(sec);
+  }
+  for (const k of ['who', 'rater']) {
+    const i = document.getElementById(k);
+    i.value = S.meta[k] || '';
+    i.oninput = () => { S.meta[k] = i.value; localStorage.setItem(KEY, JSON.stringify(S)); };
+  }
+  let open = false;
+  document.getElementById('expand').onclick = e => {
+    open = !open;
+    document.querySelectorAll('.q details').forEach(d => d.open = open);
+    e.target.textContent = open ? '收起全部答案' : '展开全部答案';
+  };
+  document.getElementById('print').onclick = () => {
+    document.querySelectorAll('.q details').forEach(d => d.open = true); window.print();
+  };
+  document.getElementById('reset').onclick = () => {
+    if (!confirm('确定清空本机保存的全部评分和备注？此操作不可撤销。')) return;
+    S.scores = {}; S.notes = {};
+    document.querySelectorAll('.score input').forEach(i => i.value = '');
+    save();
+  };
+  document.getElementById('export').onclick = () => {
+    const esc = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
+    const lines = [['被评估', '评分人', '题号', '问题', '得分', '备注'].map(esc).join(',')];
+    QS.forEach(id => {
+      const v = S.scores[id];
+      lines.push([S.meta.who, S.meta.rater, id, document.getElementById('qt-' + id).textContent,
+        v === 'F' ? '0（红旗）' : (v ?? ''), S.notes[id]].map(esc).join(','));
+    });
+    const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = el('a', { href: URL.createObjectURL(blob), download: `胜任力评分_${S.meta.who || '团队'}.csv` });
+    document.body.append(a); a.click(); a.remove();
+  };
+  refresh();
+}
+build();
+</script>
+</body>
+</html>
